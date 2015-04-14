@@ -1,7 +1,7 @@
 // YOUR CODE HERE:
 
 var App = function() {
-  this.server = 'https://api.parse.com/1/classes/chatterbox';
+  this.server = 'http://127.0.0.1:3000/1/classes/chatterbox';
 };
 
 var app = new App();
