@@ -33,6 +33,9 @@ var requestHandler = function(request, response) {
 
   // The outgoing status.
   var statusCode = (request.method === "GET") ? 200 : 201;
+  if (request.url.indexOf("/classes") === -1) {
+    statusCode = 404;
+  }
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -56,6 +59,7 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   //
   //
+  var createdAt =  new Date().toISOString();
   if (request.method === "POST") {
     var body = "";
     request.on("data", function (data) {
@@ -68,10 +72,10 @@ var requestHandler = function(request, response) {
     });
     request.on("end", function () {
         console.log(body);
-        messages.push(JSON.parse(body));
-        // var post = qs.parse(body);
-
-        // use post['blah'], etc.
+        var parsedBody = JSON.parse(body);
+        parsedBody.createdAt = createdAt;
+        parsedBody.updatedAt = createdAt;
+        messages.push(parsedBody);
       });
   }
   var answer = {
@@ -79,10 +83,16 @@ var requestHandler = function(request, response) {
   };
   if (request.method === "GET") {
     response.end(JSON.stringify(answer));
+  } else if (request.method === "POST") {
+    response.end(JSON.stringify({
+      createdAt: createdAt,
+      objectId: "P4vsi9vsBB"
+    }));
   } else {
-    response.end();
+    response.end(JSON.stringify({}));
   }
 };
+
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
